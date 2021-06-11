@@ -5,15 +5,11 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/todo")
@@ -22,11 +18,16 @@ public class TodoController {
     @Autowired
     private TodoRepository todoRepository;
 
+    @GetMapping("/limit/{count}")
+    public List<TodoEntity> findCount(@PathVariable("count") int count) {
+        return this.todoRepository.findAll(PageRequest.of(0, count)).getContent();
+    }
+ 
     @GetMapping
     public List<TodoEntity> findAll() {
         return todoRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
     }
- 
+
     @GetMapping("/{id}")
     public TodoEntity findById(@PathVariable("id") Long id) {
         return todoRepository.findById(id).get();
